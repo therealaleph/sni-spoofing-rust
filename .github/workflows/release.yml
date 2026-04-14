@@ -25,12 +25,9 @@ jobs:
           - target: aarch64-apple-darwin
             os: macos-latest
             name: sni-spoof-rs-macos-arm64
-          - target: x86_64-pc-windows-msvc
-            os: windows-latest
-            name: sni-spoof-rs-windows-amd64
           - target: x86_64-pc-windows-gnu
             os: windows-latest
-            name: sni-spoof-rs-windows-amd64-gnu
+            name: sni-spoof-rs-windows-amd64
 
     runs-on: ${{ matrix.os }}
 
