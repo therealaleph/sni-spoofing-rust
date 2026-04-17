@@ -1,4 +1,6 @@
 {
+  "idle_timeout": 300,
+  "buffer_size": 8,
   "listeners": [
     {
       "listen": "0.0.0.0:40443",

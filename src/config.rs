@@ -4,6 +4,8 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
+    pub idle_timeout: u64,
+    pub buffer_size: usize,
     pub listeners: Vec<ListenerConfig>,
 }
 

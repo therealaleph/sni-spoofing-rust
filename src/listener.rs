@@ -11,6 +11,8 @@ pub async fn run_listener(
     lc: ListenerConfig,
     local_ip: IpAddr,
     cmd_tx: std::sync::mpsc::Sender<SnifferCommand>,
+    idle_timeout: u64,
+    buffer_size: usize,
 ) {
     let listener = match TcpListener::bind(lc.listen).await {
         Ok(l) => {
@@ -32,7 +34,7 @@ pub async fn run_listener(
                 let lip = local_ip;
                 tokio::spawn(async move {
                     tracing::debug!(peer = %peer, "accepted connection");
-                    handler::handle_connection(stream, upstream, sni, lip, tx).await;
+                    handler::handle_connection(stream, upstream, sni, lip, tx, idle_timeout, buffer_size).await;
                 });
             }
             Err(e) => {
