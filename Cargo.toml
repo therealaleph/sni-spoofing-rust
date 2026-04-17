@@ -1,18 +1,18 @@
 [package]
 name = "sni-spoof-rs"
 version = "0.2.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-tokio = { version = "1", features = ["full"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time", "io-util", "signal"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 thiserror = "2"
-socket2 = "0.5"
+socket2 = "0.6.3"
 tokio-util = "0.7"
-rand = "0.8"
+rand = "0.10.1"
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"
@@ -20,3 +20,15 @@ nix = { version = "0.29", features = ["net", "ioctl"] }
 
 [target.'cfg(windows)'.dependencies]
 windivert = { version = "0.7.0-beta", features = ["static"] }
+
+# fix windivert-sys stack overflow bug
+[profile.release.package.windivert-sys]
+opt-level = 0
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = 3
+strip = true
+debug = false
