@@ -11,6 +11,8 @@ pub async fn run_listener(
     lc: ListenerConfig,
     local_ip: IpAddr,
     cmd_tx: std::sync::mpsc::Sender<SnifferCommand>,
+    idle_timeout: Option<u64>,
+    buffer_size: usize,
 ) {
     let listener = match TcpListener::bind(lc.listen).await {
         Ok(l) => {
@@ -36,7 +38,7 @@ pub async fn run_listener(
                 let keepalive_interval = lc.keepalive_interval_sec;
                 tokio::spawn(async move {
                     tracing::debug!(peer = %peer, "accepted connection");
-                    handler::handle_connection(stream, upstream, sni, lip, tx, conn_timeout, handshake_timeout, keepalive_time, keepalive_interval).await;
+                    handler::handle_connection(stream, upstream, sni, lip, tx, conn_timeout, handshake_timeout, keepalive_time, keepalive_interval, idle_timeout, buffer_size).await;
                 });
             }
             Err(e) => {

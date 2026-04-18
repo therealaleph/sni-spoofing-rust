@@ -18,8 +18,15 @@ fn default_keepalive_interval_sec() -> u64 {
     2
 }
 
+fn default_buffer_size() -> usize {
+    8
+}
+
 #[derive(Debug, Deserialize)]
 pub struct Config {
+    pub idle_timeout: Option<u64>,
+    #[serde(default = "default_buffer_size")]
+    pub buffer_size: usize,
     pub listeners: Vec<ListenerConfig>,
 }
 
