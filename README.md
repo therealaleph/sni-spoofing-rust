@@ -38,6 +38,8 @@ You should get a Cloudflare IP (usually starts with `104.`, `172.67.`, `141.101.
 
 ```json
 {
+  "idle_timeout": 300,
+  "buffer_size": 8,
   "listeners": [
     {
       "listen": "0.0.0.0:40443",
@@ -135,6 +137,8 @@ nslookup myserver.example.com
 
 ```json
 {
+  "idle_timeout": 300,
+  "buffer_size": 8,
   "listeners": [
     {
       "listen": "0.0.0.0:40443",

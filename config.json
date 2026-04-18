@@ -1,9 +1,11 @@
 {
-  "listeners": [
-    {
-      "listen": "0.0.0.0:40443",
-      "connect": "172.67.139.236:443",
-      "fake_sni": "security.vercel.com"
-    }
-  ]
+	"idle_timeout": 300,
+	"buffer_size": 8,
+	"listeners": [
+		{
+			"listen": "0.0.0.0:40443",
+			"connect": "172.67.139.236:443",
+			"fake_sni": "security.vercel.com"
+		}
+	]
 }
