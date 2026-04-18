@@ -10,6 +10,14 @@ fn default_handshake_timeout_sec() -> u64 {
     2
 }
 
+fn default_keepalive_time_sec() -> u64 {
+    11
+}
+
+fn default_keepalive_interval_sec() -> u64 {
+    2
+}
+
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub listeners: Vec<ListenerConfig>,
@@ -24,6 +32,10 @@ pub struct ListenerConfig {
     pub conn_timeout_sec: u64,
     #[serde(default = "default_handshake_timeout_sec")]
     pub handshake_timeout_sec: u64,
+    #[serde(default = "default_keepalive_time_sec")]
+    pub keepalive_time_sec: u64,
+    #[serde(default = "default_keepalive_interval_sec")]
+    pub keepalive_interval_sec: u64,
 }
 
 pub fn load(path: &str) -> Result<Config, crate::error::ConfigError> {

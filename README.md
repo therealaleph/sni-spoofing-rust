@@ -57,6 +57,8 @@ Replace `CLOUDFLARE_IP` with the IP from step 1. The `fake_sni` can be any domai
 | `fake_sni` | SNI for the fake ClientHello (max 219 bytes) |
 | `conn_timeout_sec` | Seconds to wait for the upstream TCP connection to complete (default: `5`) |
 | `handshake_timeout_sec` | Seconds to wait for the sniffer to confirm the fake packet was sent (default: `2`) |
+| `keepalive_time_sec` | Seconds of idle before TCP keepalive probes begin (default: `11`) |
+| `keepalive_interval_sec` | Seconds between individual TCP keepalive probes (default: `2`) |
 
 Multiple listeners are supported -- each maps to one upstream.
 
@@ -156,6 +158,8 @@ nslookup myserver.example.com
 | `fake_sni` | SNI برای ClientHello جعلی (حداکثر ۲۱۹ بایت) |
 | `conn_timeout_sec` | ثانیه‌های انتظار برای برقراری اتصال  (پیش‌فرض: `5`) |
 | `handshake_timeout_sec` | ثانیه‌های انتظار برای تأیید ارسال پکت جعلی توسط sniffer (پیش‌فرض: `2`) |
+| `keepalive_time_sec` | ثانیه‌های بی‌فعالیتی قبل از شروع پروب‌های TCP keepalive (پیش‌فرض: `11`) |
+| `keepalive_interval_sec` | فاصله زمانی بین پروب‌های TCP keepalive به ثانیه (پیش‌فرض: `2`) |
 
 ### مرحله ۳: تغییر کانفیگ v2ray/xray
 

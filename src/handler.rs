@@ -19,8 +19,10 @@ pub async fn handle_connection(
     cmd_tx: std::sync::mpsc::Sender<SnifferCommand>,
     conn_timeout_sec: u64,
     handshake_timeout_sec: u64,
+    keepalive_time_sec: u64,
+    keepalive_interval_sec: u64,
 ) {
-    if let Err(e) = handle_inner(client, upstream_addr, &fake_sni, local_ip, &cmd_tx, conn_timeout_sec, handshake_timeout_sec).await {
+    if let Err(e) = handle_inner(client, upstream_addr, &fake_sni, local_ip, &cmd_tx, conn_timeout_sec, handshake_timeout_sec, keepalive_time_sec, keepalive_interval_sec).await {
         match &e {
             HandlerError::Timeout => {
                 warn!(upstream = %upstream_addr, "timeout waiting for fake ACK");
@@ -40,6 +42,8 @@ async fn handle_inner(
     cmd_tx: &std::sync::mpsc::Sender<SnifferCommand>,
     conn_timeout_sec: u64,
     handshake_timeout_sec: u64,
+    keepalive_time_sec: u64,
+    keepalive_interval_sec: u64,
 ) -> Result<(), HandlerError> {
     let fake_payload = tls::build_client_hello(fake_sni);
 
@@ -136,8 +140,8 @@ async fn handle_inner(
     }
 
     let keepalive = TcpKeepalive::new()
-        .with_time(Duration::from_secs(11))
-        .with_interval(Duration::from_secs(2));
+        .with_time(Duration::from_secs(keepalive_time_sec))
+        .with_interval(Duration::from_secs(keepalive_interval_sec));
     let sock_ref = SockRef::from(&upstream);
     let _ = sock_ref.set_tcp_keepalive(&keepalive);
 
