@@ -55,6 +55,8 @@ Replace `CLOUDFLARE_IP` with the IP from step 1. The `fake_sni` can be any domai
 | `listen` | Local address and port to listen on |
 | `connect` | Cloudflare IP and port (must be an IP, not a hostname) |
 | `fake_sni` | SNI for the fake ClientHello (max 219 bytes) |
+| `conn_timeout_sec` | Seconds to wait for the upstream TCP connection to complete (default: `5`) |
+| `handshake_timeout_sec` | Seconds to wait for the sniffer to confirm the fake packet was sent (default: `2`) |
 
 Multiple listeners are supported -- each maps to one upstream.
 
@@ -146,6 +148,14 @@ nslookup myserver.example.com
 ```
 
 به جای `IP_CLOUDFLARE` آی‌پی مرحله ۱ را بگذارید. مقدار `fake_sni` می‌تواند هر دامنه‌ای باشد که فیلتر نیست (یک سایت معروف پشت کلادفلر بهتر جواب می‌دهد).
+
+| فیلد | توضیح |
+|---|---|
+| `listen` | آدرس و پورت محلی برای گوش دادن |
+| `connect` | آی‌پی و پورت کلادفلر (باید IP باشد، نه دامنه) |
+| `fake_sni` | SNI برای ClientHello جعلی (حداکثر ۲۱۹ بایت) |
+| `conn_timeout_sec` | ثانیه‌های انتظار برای برقراری اتصال  (پیش‌فرض: `5`) |
+| `handshake_timeout_sec` | ثانیه‌های انتظار برای تأیید ارسال پکت جعلی توسط sniffer (پیش‌فرض: `2`) |
 
 ### مرحله ۳: تغییر کانفیگ v2ray/xray
 

@@ -30,9 +30,11 @@ pub async fn run_listener(
                 let sni = lc.fake_sni.clone();
                 let tx = cmd_tx.clone();
                 let lip = local_ip;
+                let conn_timeout = lc.conn_timeout_sec;
+                let handshake_timeout = lc.handshake_timeout_sec;
                 tokio::spawn(async move {
                     tracing::debug!(peer = %peer, "accepted connection");
-                    handler::handle_connection(stream, upstream, sni, lip, tx).await;
+                    handler::handle_connection(stream, upstream, sni, lip, tx, conn_timeout, handshake_timeout).await;
                 });
             }
             Err(e) => {

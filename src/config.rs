@@ -2,6 +2,14 @@ use std::net::SocketAddr;
 
 use serde::Deserialize;
 
+fn default_conn_timeout_sec() -> u64 {
+    5
+}
+
+fn default_handshake_timeout_sec() -> u64 {
+    2
+}
+
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub listeners: Vec<ListenerConfig>,
@@ -12,6 +20,10 @@ pub struct ListenerConfig {
     pub listen: SocketAddr,
     pub connect: SocketAddr,
     pub fake_sni: String,
+    #[serde(default = "default_conn_timeout_sec")]
+    pub conn_timeout_sec: u64,
+    #[serde(default = "default_handshake_timeout_sec")]
+    pub handshake_timeout_sec: u64,
 }
 
 pub fn load(path: &str) -> Result<Config, crate::error::ConfigError> {

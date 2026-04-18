@@ -17,8 +17,10 @@ pub async fn handle_connection(
     fake_sni: String,
     local_ip: std::net::IpAddr,
     cmd_tx: std::sync::mpsc::Sender<SnifferCommand>,
+    conn_timeout_sec: u64,
+    handshake_timeout_sec: u64,
 ) {
-    if let Err(e) = handle_inner(client, upstream_addr, &fake_sni, local_ip, &cmd_tx).await {
+    if let Err(e) = handle_inner(client, upstream_addr, &fake_sni, local_ip, &cmd_tx, conn_timeout_sec, handshake_timeout_sec).await {
         match &e {
             HandlerError::Timeout => {
                 warn!(upstream = %upstream_addr, "timeout waiting for fake ACK");
@@ -36,6 +38,8 @@ async fn handle_inner(
     fake_sni: &str,
     local_ip: std::net::IpAddr,
     cmd_tx: &std::sync::mpsc::Sender<SnifferCommand>,
+    conn_timeout_sec: u64,
+    handshake_timeout_sec: u64,
 ) -> Result<(), HandlerError> {
     let fake_payload = tls::build_client_hello(fake_sni);
 
@@ -109,7 +113,7 @@ async fn handle_inner(
     let std_stream: std::net::TcpStream = upstream_sock.into();
     let upstream = TcpStream::from_std(std_stream).map_err(HandlerError::Connect)?;
 
-    let connect_result = tokio::time::timeout(Duration::from_secs(5), upstream.writable()).await;
+    let connect_result = tokio::time::timeout(Duration::from_secs(conn_timeout_sec), upstream.writable()).await;
     match connect_result {
         Ok(Ok(())) => {
             let sock_ref = SockRef::from(&upstream);
@@ -142,7 +146,7 @@ async fn handle_inner(
 
     debug!(port = local_addr.port(), "connected, waiting for sniffer confirmation");
 
-    let confirmed = tokio::time::timeout(Duration::from_secs(2), async {
+    let confirmed = tokio::time::timeout(Duration::from_secs(handshake_timeout_sec), async {
         while let Some(result) = result_rx.recv().await {
             match result {
                 SnifferResult::FakeConfirmed => return Ok(()),
