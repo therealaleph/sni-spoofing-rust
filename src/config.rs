@@ -18,9 +18,15 @@ fn default_keepalive_interval_sec() -> u64 {
     2
 }
 
+fn default_graceful_shutdown_sec() -> u64 {
+    0
+}
+
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub listeners: Vec<ListenerConfig>,
+    #[serde(default = "default_graceful_shutdown_sec")]
+    pub graceful_shutdown_sec: u64,
 }
 
 #[derive(Debug, Deserialize)]
