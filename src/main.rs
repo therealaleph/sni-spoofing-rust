@@ -115,7 +115,7 @@ fn main() {
         for lc in cfg.listeners {
             let tx = cmd_tx.clone();
             let lip = resolve_local_ip(lc.connect.ip()).unwrap_or(local_ips[0]);
-            handles.push(tokio::spawn(listener::run_listener(lc, lip, tx)));
+            handles.push(tokio::spawn(listener::run_listener(lc, lip, tx, cfg.idle_timeout, cfg.buffer_size)));
         }
 
         for h in handles {

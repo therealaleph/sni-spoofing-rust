@@ -21,8 +21,10 @@ pub async fn handle_connection(
     handshake_timeout_sec: u64,
     keepalive_time_sec: u64,
     keepalive_interval_sec: u64,
+    idle_timeout: Option<u64>,
+    buffer_size: usize,
 ) {
-    if let Err(e) = handle_inner(client, upstream_addr, &fake_sni, local_ip, &cmd_tx, conn_timeout_sec, handshake_timeout_sec, keepalive_time_sec, keepalive_interval_sec).await {
+    if let Err(e) = handle_inner(client, upstream_addr, &fake_sni, local_ip, &cmd_tx, conn_timeout_sec, handshake_timeout_sec, keepalive_time_sec, keepalive_interval_sec, idle_timeout, buffer_size).await {
         match &e {
             HandlerError::Timeout => {
                 warn!(upstream = %upstream_addr, "timeout waiting for fake ACK");
@@ -44,6 +46,8 @@ async fn handle_inner(
     handshake_timeout_sec: u64,
     keepalive_time_sec: u64,
     keepalive_interval_sec: u64,
+    idle_timeout: Option<u64>,
+    buffer_size: usize,
 ) -> Result<(), HandlerError> {
     let fake_payload = tls::build_client_hello(fake_sni);
 
@@ -169,5 +173,5 @@ async fn handle_inner(
 
     info!(port = local_addr.port(), "fake confirmed, starting relay");
 
-    relay::relay(client, upstream).await.map_err(HandlerError::Relay)
+    relay::relay(client, upstream, idle_timeout, buffer_size).await.map_err(HandlerError::Relay)
 }

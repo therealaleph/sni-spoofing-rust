@@ -13,6 +13,7 @@ thiserror = "2"
 socket2 = "0.5"
 tokio-util = "0.7"
 rand = "0.8"
+tokio-io-timeout = "1.2.1"
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"
