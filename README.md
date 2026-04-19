@@ -24,7 +24,9 @@ A TCP forwarder that injects a fake TLS ClientHello with an intentionally wrong 
 cargo build --release
 ```
 
-Pre-built binaries for Linux (amd64/arm64), macOS (amd64/arm64), and Windows (amd64) are available on the [releases](https://github.com/therealaleph/sni-spoofing-rust/releases) page.
+Pre-built binaries for Linux (amd64/arm64), macOS (amd64/arm64), and Windows (amd64) are available two ways:
+- [GitHub Releases](https://github.com/therealaleph/sni-spoofing-rust/releases) page
+- The [`releases/`](releases/) folder in this repository (useful if the Releases page is blocked for you -- just clone the repo or download as ZIP)
 
 ## Setup Guide
 
@@ -213,7 +215,9 @@ sni-spoof-rs.exe config.json
 
 ### دانلود
 
-فایل‌های اجرایی آماده برای لینوکس، مک و ویندوز از صفحه [releases](https://github.com/therealaleph/sni-spoofing-rust/releases) قابل دانلود هستند.
+فایل‌های اجرایی آماده برای لینوکس، مک و ویندوز از دو جا قابل دانلودند:
+- صفحه [GitHub Releases](https://github.com/therealaleph/sni-spoofing-rust/releases)
+- پوشه [`releases/`](releases/) در خود ریپازیتوری (اگر صفحه Releases برای شما فیلتر است از اینجا دانلود کنید -- کافیست ریپو را clone یا به صورت ZIP دانلود کنید)
 
 ## License
 

@@ -102,7 +102,13 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/download-artifact@v4
         with:
           path: dist
@@ -113,3 +119,23 @@ jobs:
         with:
           files: dist/*
           generate_release_notes: true
+
+      - name: Commit binaries to releases/ folder
+        run: |
+          mkdir -p releases
+          cp dist/sni-spoof-rs-linux-amd64 releases/
+          cp dist/sni-spoof-rs-linux-arm64 releases/
+          cp dist/sni-spoof-rs-macos-amd64 releases/
+          cp dist/sni-spoof-rs-macos-arm64 releases/
+          cp dist/sni-spoof-rs-windows-amd64.zip releases/
+          chmod +x releases/sni-spoof-rs-linux-* releases/sni-spoof-rs-macos-*
+          TAG="${GITHUB_REF#refs/tags/}"
+          sed -i "s/Current version: \*\*v[0-9.]*\*\*/Current version: **${TAG}**/" releases/README.md || true
+          sed -i "s/نسخه فعلی: \*\*v[0-9.]*\*\*/نسخه فعلی: **${TAG}**/" releases/README.md || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add releases/
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update prebuilt binaries to ${TAG}"
+            git push origin HEAD:main
+          fi
