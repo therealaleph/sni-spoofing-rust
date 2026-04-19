@@ -44,6 +44,7 @@ You should get a Cloudflare IP (usually starts with `104.`, `172.67.`, `141.101.
 
 ```json
 {
+  "graceful_shutdown_sec": 0,
   "listeners": [
     {
       "listen": "0.0.0.0:40443",
@@ -65,6 +66,10 @@ Replace `CLOUDFLARE_IP` with the IP from step 1. The `fake_sni` can be any domai
 | `handshake_timeout_sec` | Seconds to wait for the sniffer to confirm the fake packet was sent (default: `2`) |
 | `keepalive_time_sec` | Seconds of idle before TCP keepalive probes begin (default: `11`) |
 | `keepalive_interval_sec` | Seconds between individual TCP keepalive probes (default: `2`) |
+
+| Top-level Field | Description |
+|---|---|
+| `graceful_shutdown_sec` | Seconds to wait for active connections to finish after receiving a shutdown signal. `0` exits immediately (default: `0`) |
 
 Multiple listeners are supported -- each maps to one upstream.
 
@@ -145,6 +150,7 @@ nslookup myserver.example.com
 
 ```json
 {
+  "graceful_shutdown_sec": 0,
   "listeners": [
     {
       "listen": "0.0.0.0:40443",
@@ -166,6 +172,10 @@ nslookup myserver.example.com
 | `handshake_timeout_sec` | ثانیه‌های انتظار برای تأیید ارسال پکت جعلی توسط sniffer (پیش‌فرض: `2`) |
 | `keepalive_time_sec` | ثانیه‌های بی‌فعالیتی قبل از شروع پروب‌های TCP keepalive (پیش‌فرض: `11`) |
 | `keepalive_interval_sec` | فاصله زمانی بین پروب‌های TCP keepalive به ثانیه (پیش‌فرض: `2`) |
+
+| فیلد سطح بالا | توضیح |
+|---|---|
+| `graceful_shutdown_sec` | مدت انتظار (به ثانیه) برای اتمام اتصالات فعال پس از دریافت سیگنال خاموشی. مقدار `0` بلافاصله خارج می‌شود (پیش‌فرض: `0`) |
 
 ### مرحله ۳: تغییر کانفیگ v2ray/xray
 

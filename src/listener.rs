@@ -2,7 +2,9 @@ use std::net::IpAddr;
 use std::time::Duration;
 
 use tokio::net::TcpListener;
+use tokio::task::JoinSet;
 use tracing::{error, info, warn};
+use tokio_util::sync::CancellationToken;
 
 use crate::config::ListenerConfig;
 use crate::handler;
@@ -26,6 +28,7 @@ pub async fn run_listener(
     cmd_tx: std::sync::mpsc::Sender<SnifferCommand>,
     idle_timeout: Option<u64>,
     buffer_size: usize,
+    token: CancellationToken,
 ) {
     let listener = match TcpListener::bind(lc.listen).await {
         Ok(l) => {
@@ -38,8 +41,15 @@ pub async fn run_listener(
         }
     };
 
+    let mut tasks = JoinSet::new();
+
     loop {
-        match listener.accept().await {
+        let accepted = tokio::select! {
+            result = listener.accept() => result,
+            _ = token.cancelled() => break,
+        };
+
+        match accepted {
             Ok((stream, peer)) => {
                 let upstream = lc.connect;
                 let sni = lc.fake_sni.clone();
@@ -49,7 +59,7 @@ pub async fn run_listener(
                 let handshake_timeout = lc.handshake_timeout_sec;
                 let keepalive_time = lc.keepalive_time_sec;
                 let keepalive_interval = lc.keepalive_interval_sec;
-                tokio::spawn(async move {
+                tasks.spawn(async move {
                     tracing::debug!(peer = %peer, "accepted connection");
                     handler::handle_connection(stream, upstream, sni, lip, tx, conn_timeout, handshake_timeout, keepalive_time, keepalive_interval, idle_timeout, buffer_size).await;
                 });
@@ -65,4 +75,8 @@ pub async fn run_listener(
             }
         }
     }
+
+    info!(listen = %lc.listen, "stopped accepting, draining active connections");
+    while tasks.join_next().await.is_some() {}
+    info!(listen = %lc.listen, "all connections drained");
 }

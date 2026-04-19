@@ -22,12 +22,18 @@ fn default_buffer_size() -> usize {
     8
 }
 
+fn default_graceful_shutdown_sec() -> u64 {
+    0
+}
+
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub idle_timeout: Option<u64>,
     #[serde(default = "default_buffer_size")]
     pub buffer_size: usize,
     pub listeners: Vec<ListenerConfig>,
+    #[serde(default = "default_graceful_shutdown_sec")]
+    pub graceful_shutdown_sec: u64,
 }
 
 #[derive(Debug, Deserialize)]
