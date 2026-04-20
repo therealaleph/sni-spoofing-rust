@@ -111,6 +111,31 @@ sni-spoof-rs.exe config.json
 
 Then connect with your v2ray/xray client as usual.
 
+### Finding a working fake_sni (scan mode)
+
+If your chosen `fake_sni` stops working (e.g., after a DPI update), the tool includes a scanner that probes a built-in list of ~650 Cloudflare-fronted domains and reports which ones pass through your network:
+
+```
+# scan using built-in list (no sudo needed -- scan mode is plain outbound TLS)
+./sni-spoof-rs scan
+
+# save working SNIs to a file
+./sni-spoof-rs scan -o working.txt
+
+# scan your own list
+./sni-spoof-rs scan --list my-snis.txt
+
+# probe against a specific Cloudflare IP
+./sni-spoof-rs scan --target 172.67.139.236:443
+
+# faster scanning
+./sni-spoof-rs scan --concurrency 30 --timeout 4
+```
+
+Pick any SNI from the output as your `fake_sni` in `config.json`. The scanner does not need root or the raw socket -- it just opens a TCP connection and sends a ClientHello.
+
+**Caveat:** this works for passive SNI-based DPI (the current common case). If your ISP does full TLS MITM (terminates and re-establishes TLS), most SNIs will appear "reachable" but the DPI bypass itself will still fail -- that problem requires a different tool (REALITY, Hysteria, ECH in xray).
+
 ### Logging
 
 The default log level is `warn` -- the tool runs silent unless something goes wrong. No connection metadata is logged by default.
@@ -212,6 +237,31 @@ sni-spoof-rs.exe config.json
 **نکته ویندوز:** فایل دانلودی ویندوز یک zip است که شامل `sni-spoof-rs.exe` و `WinDivert64.sys` می‌باشد. هر دو فایل باید در یک پوشه باشند. فایل `.sys` درایور کرنل WinDivert است که برای رهگیری پکت‌ها لازم است.
 
 بعد از اجرا، کلاینت v2ray/xray خود را مثل همیشه وصل کنید.
+
+### پیدا کردن fake_sni قابل استفاده (حالت scan)
+
+اگر `fake_sni` فعلی شما کار نمی‌کند (مثلا بعد از آپدیت DPI)، ابزار یک اسکنر داخلی دارد که لیستی از حدود ۶۵۰ دامنه پشت کلادفلر را روی شبکه‌ی شما تست می‌کند و SNI‌های در دسترس را نشان می‌دهد:
+
+```
+# اسکن با لیست داخلی (نیاز به sudo ندارد)
+./sni-spoof-rs scan
+
+# ذخیره نتایج در فایل
+./sni-spoof-rs scan -o working.txt
+
+# استفاده از لیست سفارشی
+./sni-spoof-rs scan --list my-snis.txt
+
+# تست روی یک IP کلادفلر خاص
+./sni-spoof-rs scan --target 172.67.139.236:443
+
+# اسکن سریع‌تر
+./sni-spoof-rs scan --concurrency 30 --timeout 4
+```
+
+هر SNI از خروجی را می‌توانید در `config.json` به عنوان `fake_sni` بگذارید. حالت scan نیازی به root یا raw socket ندارد -- فقط یک اتصال TCP عادی باز می‌کند و ClientHello می‌فرستد.
+
+**نکته مهم:** این روش برای DPI غیرفعال که SNI را چک می‌کند (حالت رایج فعلی) جواب می‌دهد. اگر ISP شما TLS MITM کامل انجام می‌دهد (یعنی TLS را ترمینیت و دوباره باز می‌کند)، اکثر SNIها "قابل دسترس" نشان داده می‌شوند ولی خود دور زدن DPI کار نمی‌کند -- این مشکل نیاز به ابزار دیگری دارد (REALITY، Hysteria، یا فعال کردن ECH در xray).
 
 ### دانلود
 

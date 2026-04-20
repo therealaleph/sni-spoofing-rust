@@ -7,6 +7,7 @@ mod listener;
 mod packet;
 mod proto;
 mod relay;
+mod scan;
 mod shutdown;
 mod sniffer;
 
@@ -26,8 +27,30 @@ fn main() {
         )
         .init();
 
-    let config_path = std::env::args().nth(1).unwrap_or_else(|| "config.json".into());
-    let cfg = match config::load(&config_path) {
+    let raw_args: Vec<String> = std::env::args().skip(1).collect();
+
+    match raw_args.first().map(|s| s.as_str()) {
+        Some("scan") => scan::run(&raw_args[1..]),
+        Some("-h") | Some("--help") => print_top_level_help(),
+        _ => {
+            let config_path = raw_args.into_iter().next().unwrap_or_else(|| "config.json".into());
+            run_proxy(&config_path);
+        }
+    }
+}
+
+fn print_top_level_help() {
+    eprintln!("sni-spoof-rs -- DPI bypass via fake TLS ClientHello injection");
+    eprintln!();
+    eprintln!("USAGE:");
+    eprintln!("  sni-spoof-rs [CONFIG]        run as proxy (default: config.json)");
+    eprintln!("  sni-spoof-rs scan [OPTS]     probe SNIs for fake_sni candidates");
+    eprintln!();
+    eprintln!("Run 'sni-spoof-rs scan --help' for scan options.");
+}
+
+fn run_proxy(config_path: &str) {
+    let cfg = match config::load(config_path) {
         Ok(c) => c,
         Err(e) => {
             error!("{}", e);
