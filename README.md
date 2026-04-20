@@ -146,6 +146,15 @@ Set `RUST_LOG` for verbosity when debugging:
 sudo RUST_LOG=info ./sni-spoof-rs config.json
 sudo RUST_LOG=debug ./sni-spoof-rs config.json
 ```
+### Building from source
+To build cross-platform binaries for all supported platforms, use the included Makefile:
+
+```bash
+make all
+```
+
+This will create binaries for Linux (x64/ARM64), macOS (x64/ARM64), and Windows (x64) in the bins/ directory. Individual platform targets are also available: make linux-x64, make macos-arm64, etc.
+
 
 ## How it works
 
@@ -262,6 +271,15 @@ sni-spoof-rs.exe config.json
 هر SNI از خروجی را می‌توانید در `config.json` به عنوان `fake_sni` بگذارید. حالت scan نیازی به root یا raw socket ندارد -- فقط یک اتصال TCP عادی باز می‌کند و ClientHello می‌فرستد.
 
 **نکته مهم:** این روش برای DPI غیرفعال که SNI را چک می‌کند (حالت رایج فعلی) جواب می‌دهد. اگر ISP شما TLS MITM کامل انجام می‌دهد (یعنی TLS را ترمینیت و دوباره باز می‌کند)، اکثر SNIها "قابل دسترس" نشان داده می‌شوند ولی خود دور زدن DPI کار نمی‌کند -- این مشکل نیاز به ابزار دیگری دارد (REALITY، Hysteria، یا فعال کردن ECH در xray).
+
+### بیلد از سورس
+برای ساخت فایل‌های اجرایی برای تمام پلتفرم‌ها، از Makefile موجود استفاده کنید:
+
+```bash
+make all
+```
+
+این دستور فایل‌های اجرایی برای لینوکس (x64/ARM64)، مک (x64/ARM64) و ویندوز (x64) را در پوشه bins/ می‌سازد. همچنین می‌توانید برای هر پلتفرم جداگانه بیلد بگیرید: make linux-x64، make macos-arm64 و غیره.
 
 ### دانلود
 
