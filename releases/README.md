@@ -2,7 +2,7 @@
 
 This folder contains the prebuilt binaries from the latest release, committed directly to the repository for users who cannot access the GitHub Releases page.
 
-Current version: **v0.4.0**
+Current version: **v0.5.0**
 
 | File | Platform |
 |---|---|
@@ -40,7 +40,7 @@ On Windows, extract the zip (keep `.exe`, `.dll`, `.sys` together), then run as 
 
 این پوشه شامل فایل‌های اجرایی آخرین نسخه است که مستقیماً در ریپازیتوری قرار گرفته‌اند برای کاربرانی که به صفحه GitHub Releases دسترسی ندارند.
 
-نسخه فعلی: **v0.4.0**
+نسخه فعلی: **v0.5.0**
 
 ### دانلود از طریق ZIP
 
