@@ -5,7 +5,7 @@ pub mod macos;
 #[cfg(target_os = "windows")]
 pub mod windows;
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::net::IpAddr;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -103,7 +103,7 @@ struct ParsedPacket {
 
 fn parse_frame(
     frame: &[u8],
-    local_ips: &[IpAddr],
+    local_ips: &HashSet<IpAddr>,
     upstream_addrs: &HashMap<(IpAddr, u16), ()>,
     frame_kind: FrameKind,
 ) -> Option<ParsedPacket> {
@@ -188,6 +188,7 @@ pub fn run_sniffer(
     upstream_addrs: Vec<(IpAddr, u16)>,
     stop: Arc<AtomicBool>,
 ) {
+    let local_ips_set: HashSet<IpAddr> = local_ips.into_iter().collect();
     let upstream_set: HashMap<(IpAddr, u16), ()> =
         upstream_addrs.iter().map(|a| (*a, ())).collect();
     let frame_kind = backend.frame_kind();
@@ -254,7 +255,7 @@ pub fn run_sniffer(
         };
 
         let frame = &buf[..n];
-        let parsed = match parse_frame(frame, &local_ips, &upstream_set, frame_kind) {
+        let parsed = match parse_frame(frame, &local_ips_set, &upstream_set, frame_kind) {
             Some(p) => p,
             None => continue,
         };
